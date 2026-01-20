@@ -6,7 +6,7 @@ function getTodayKey() {
 
 function getWeekKey(date = new Date()) {
   const d = new Date(date);
-  const day = d.getDay(); // 0 Sun
+  const day = d.getDay();
   const diff = d.getDate() - day + (day === 0 ? -6 : 1);
   return new Date(d.setDate(diff)).toDateString();
 }
@@ -14,9 +14,8 @@ function getWeekKey(date = new Date()) {
 function getData() {
   const raw = localStorage.getItem(STORAGE_KEY);
   return raw ? JSON.parse(raw) : {
-    studiedToday: 0,
+    studiedSecondsToday: 0,
     lastStudyDate: null,
-    dailyTarget: 300,
 
     goals: [],
     activeGoalId: null,
@@ -36,14 +35,14 @@ function ensureDailyReset() {
   const today = getTodayKey();
 
   if (data.lastStudyDate !== today) {
-    data.studiedToday = 0;
+    data.studiedSecondsToday = 0;
     data.lastStudyDate = today;
     saveData(data);
   }
 }
 
-function addStudyTime(minutes) {
-  if (minutes <= 0) return;
+function addStudySeconds(seconds) {
+  if (seconds <= 0) return;
 
   const data = getData();
   const now = new Date();
@@ -51,31 +50,33 @@ function addStudyTime(minutes) {
 
   ensureDailyReset();
 
-  data.studiedToday += minutes;
+  // ---- DASHBOARD ----
+  data.studiedSecondsToday += seconds;
 
-  // DAILY
-  data.dailyStats[todayKey] = (data.dailyStats[todayKey] || 0) + minutes;
+  // ---- DAILY STATS ----
+  data.dailyStats[todayKey] =
+    (data.dailyStats[todayKey] || 0) + seconds;
 
-  // WEEKLY
+  // ---- WEEKLY STATS ----
   const weekKey = getWeekKey(now);
   if (!data.weeklyStats[weekKey]) {
     data.weeklyStats[weekKey] = {1:0,2:0,3:0,4:0,5:0,6:0,7:0};
   }
   const dayIndex = ((now.getDay() + 6) % 7) + 1;
-  data.weeklyStats[weekKey][dayIndex] += minutes;
+  data.weeklyStats[weekKey][dayIndex] += seconds;
 
-  // YEARLY
+  // ---- YEARLY STATS ----
   const year = now.getFullYear().toString();
   if (!data.yearlyStats[year]) {
     data.yearlyStats[year] = Array(12).fill(0);
   }
-  data.yearlyStats[year][now.getMonth()] += minutes;
+  data.yearlyStats[year][now.getMonth()] += seconds;
 
-  // ACTIVE GOAL
+  // ---- ACTIVE GOAL ----
   if (data.activeGoalId !== null) {
     const goal = data.goals.find(g => g.id === data.activeGoalId);
     if (goal && !goal.completed) {
-      goal.spent += minutes;
+      goal.spent += Math.ceil(seconds / 60);
       if (goal.spent >= goal.target) {
         goal.completed = true;
         goal.active = false;
