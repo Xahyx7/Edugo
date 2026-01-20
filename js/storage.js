@@ -86,3 +86,13 @@ function addStudyTime(minutes) {
 
   saveData(data);
 }
+function ensureDailyReset() {
+  const data = getData();
+  const todayKey = new Date().toDateString();
+
+  if (data.lastStudyDate !== todayKey) {
+    data.studiedToday = 0;
+    data.lastStudyDate = todayKey;
+    saveData(data);
+  }
+}
