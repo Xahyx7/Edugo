@@ -5,11 +5,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function updateGreeting() {
   const hour = new Date().getHours();
-  const greet = document.getElementById("greeting");
+  const g = document.getElementById("greeting");
 
-  if (hour < 12) greet.textContent = "Good Morning 👋";
-  else if (hour < 18) greet.textContent = "Good Afternoon 👋";
-  else greet.textContent = "Good Evening 👋";
+  if (hour < 12) g.textContent = "Good Morning 👋";
+  else if (hour < 18) g.textContent = "Good Afternoon 👋";
+  else g.textContent = "Good Evening 👋";
 }
 
 function updateDashboard() {
