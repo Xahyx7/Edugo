@@ -187,3 +187,88 @@ svg circle:first-child {
   background: var(--accent);
   transition: width 0.6s ease;
 }
+/* ---------- GLOBAL POLISH ---------- */
+
+body {
+  transition: background 0.3s ease, color 0.3s ease;
+}
+
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.card:active {
+  transform: scale(0.98);
+}
+
+/* ---------- BUTTONS ---------- */
+
+button {
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+button:active {
+  transform: scale(0.94);
+}
+
+/* ---------- PRIMARY BUTTON ---------- */
+
+.primary-btn {
+  box-shadow: 0 10px 20px rgba(79,70,229,0.25);
+}
+
+body[data-theme="dark"] .primary-btn {
+  box-shadow: 0 0 25px rgba(99,102,241,0.4);
+}
+
+/* ---------- SECTION HEADERS ---------- */
+
+h2 {
+  margin-bottom: 6px;
+}
+
+h3 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+}
+
+/* ---------- BOTTOM NAV ACTIVE STATE ---------- */
+
+.bottom-nav button {
+  opacity: 0.6;
+}
+
+.bottom-nav button.active {
+  opacity: 1;
+  transform: scale(1.1);
+}
+/* ---------- TIMER FOCUS MODE ---------- */
+
+#timerDisplay {
+  font-weight: 600;
+  letter-spacing: 1px;
+}
+
+body[data-theme="dark"] #timerDisplay {
+  text-shadow: 0 0 20px rgba(99,102,241,0.6);
+}
+/* ---------- GOALS STATES ---------- */
+
+.goal-card {
+  border-left: 4px solid transparent;
+}
+
+.goal-card.active {
+  border-left: 4px solid var(--accent);
+}
+
+.goal-card.completed {
+  opacity: 0.7;
+}
+.bar .fill {
+  transition: height 0.6s ease;
+  border-radius: 6px 6px 0 0;
+}
+body[data-theme="dark"] .card {
+  box-shadow: 0 0 30px rgba(0,0,0,0.6);
+}
