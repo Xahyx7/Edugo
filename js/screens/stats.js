@@ -13,30 +13,29 @@ function loadStats(view = "daily") {
     </section>
   `;
 
-  if (view === "daily") renderDailyStats(data);
-  if (view === "weekly") renderWeeklyStats(data);
-  if (view === "yearly") renderYearlyStats(data);
+  if (view === "daily") renderDaily(data);
+  if (view === "weekly") renderWeekly(data);
+  if (view === "yearly") renderYearly(data);
 }
 
-function renderDailyStats(data) {
-  const todayKey = new Date().toDateString();
-  const minutes = data.dailyStats[todayKey] || 0;
+function renderDaily(data) {
+  const key = new Date().toDateString();
+  const min = data.dailyStats[key] || 0;
 
   document.getElementById("statsContent").innerHTML = `
     <div class="card">
-      <h2>${Math.floor(minutes/60)}h ${minutes%60}m</h2>
+      <h2>${Math.floor(min/60)}h ${min%60}m</h2>
       <p>Studied Today</p>
     </div>
   `;
 }
 
-function renderWeeklyStats(data) {
-  const weekKey = getWeekKey(new Date());
-  const week = data.weeklyStats[weekKey] || {1:0,2:0,3:0,4:0,5:0,6:0,7:0};
-
+function renderWeekly(data) {
+  const week = data.weeklyStats[getWeekKey()] || {1:0,2:0,3:0,4:0,5:0,6:0,7:0};
   let bars = "";
-  Object.values(week).forEach(min => {
-    bars += `<div class="bar"><div class="fill" style="height:${min}px"></div></div>`;
+
+  Object.values(week).forEach(m => {
+    bars += `<div class="bar"><div class="fill" style="height:${Math.max(m*2,6)}px"></div></div>`;
   });
 
   document.getElementById("statsContent").innerHTML = `
@@ -47,18 +46,18 @@ function renderWeeklyStats(data) {
   `;
 }
 
-function renderYearlyStats(data) {
-  const yearKey = new Date().getFullYear().toString();
-  const months = data.yearlyStats[yearKey] || Array(12).fill(0);
-
+function renderYearly(data) {
+  const year = new Date().getFullYear().toString();
+  const months = data.yearlyStats[year] || Array(12).fill(0);
   let bars = "";
-  months.forEach(min => {
-    bars += `<div class="bar"><div class="fill" style="height:${min/5}px"></div></div>`;
+
+  months.forEach(m => {
+    bars += `<div class="bar"><div class="fill" style="height:${Math.max(m/5,6)}px"></div></div>`;
   });
 
   document.getElementById("statsContent").innerHTML = `
     <div class="card">
-      <h3>${yearKey}</h3>
+      <h3>${year}</h3>
       <div class="bar-row">${bars}</div>
     </div>
   `;
