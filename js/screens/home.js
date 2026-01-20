@@ -2,10 +2,11 @@ function loadHome() {
   const container = document.getElementById("screen-container");
   const data = getData();
 
-  // ----- GOALS LIST -----
   let goalsHTML = "";
 
-  if (data.goals && data.goals.length > 0) {
+  if (data.goals.length === 0) {
+    goalsHTML = `<p style="color:var(--subtext)">No goals added yet</p>`;
+  } else {
     data.goals.forEach(goal => {
       const percent = goal.target > 0
         ? Math.min(Math.round((goal.spent / goal.target) * 100), 100)
@@ -21,18 +22,14 @@ function loadHome() {
         </div>
       `;
     });
-  } else {
-    goalsHTML = `<p style="color:var(--subtext)">No goals added yet</p>`;
   }
 
   container.innerHTML = `
     <section class="dashboard fade-in">
-
-      <!-- HERO CARD -->
       <div class="card hero-card">
         <div class="progress-ring">
           <svg width="140" height="140">
-            <circle cx="70" cy="70" r="60" />
+            <circle cx="70" cy="70" r="60"/>
             <circle cx="70" cy="70" r="60" id="progressCircle"/>
           </svg>
           <div class="progress-text">
@@ -48,10 +45,8 @@ function loadHome() {
 
       <h3>Today’s Goals</h3>
       ${goalsHTML}
-
     </section>
   `;
 
-  // ensure dashboard numbers are always correct
   setTimeout(updateDashboard, 50);
 }
