@@ -1,99 +1,33 @@
-/* ===============================
-   APP STARTUP
-================================ */
-
-document.addEventListener("DOMContentLoaded", () => {
-  updateGreeting();
-  loadScreen("home");
-});
-
-/* ===============================
-   GREETING
-================================ */
-
-function updateGreeting() {
-  const hour = new Date().getHours();
-  const greeting = document.getElementById("greeting");
-
-  if (!greeting) return;
-
-  if (hour < 12) greeting.textContent = "Good Morning 👋";
-  else if (hour < 18) greeting.textContent = "Good Afternoon 👋";
-  else greeting.textContent = "Good Evening 👋";
-}
-
-/* ===============================
-   DASHBOARD UPDATE
-================================ */
-
 function updateDashboard() {
   const data = getData();
+  const sec = data.studiedSecondsToday;
 
-  const studied = data.studiedToday || 0;
-  const target = data.dailyTarget || 1;
+  const h = Math.floor(sec / 3600);
+  const m = Math.floor((sec % 3600) / 60);
 
-  const hours = Math.floor(studied / 60);
-  const minutes = studied % 60;
+  document.getElementById("studiedTime").textContent = `${h}h ${m}m`;
 
-  const percent = Math.min(
-    Math.round((studied / target) * 100),
-    100
-  );
-
-  const timeText = document.getElementById("studiedTime");
   const circle = document.getElementById("progressCircle");
-
-  if (timeText) {
-    timeText.textContent = `${hours}h ${minutes}m`;
-  }
-
-  if (circle) {
-    const total = 377;
-    circle.style.strokeDashoffset =
-      total - (percent / 100) * total;
-  }
+  const percent = Math.min(sec / (5 * 3600), 1);
+  circle.style.strokeDashoffset = 377 - percent * 377;
 }
 
-/* ===============================
-   GOALS – ADD / ACTIVATE / COMPLETE
-================================ */
-
 function showAddGoal() {
-  const subject = prompt("Enter subject");
-  const topic = prompt("Enter topic");
+  const subject = prompt("Subject");
+  const topic = prompt("Topic");
+  const h = Number(prompt("Hours")) || 0;
+  const m = Number(prompt("Minutes")) || 0;
 
-  const hoursInput = prompt("Target hours (0 if none)");
-  const minutesInput = prompt("Target minutes (0–59)");
-
-  if (!subject || !topic) return;
-
-  const hours = Number(hoursInput) || 0;
-  const minutes = Number(minutesInput) || 0;
-
-  if (hours < 0 || minutes < 0 || minutes >= 60) {
-    alert("Please enter valid time");
-    return;
-  }
-
-  const totalMinutes = (hours * 60) + minutes;
-
-  if (totalMinutes <= 0) {
-    alert("Goal time must be greater than 0");
-    return;
-  }
+  const totalSec = (h * 3600) + (m * 60);
+  if (totalSec <= 0) return;
 
   const data = getData();
-
-  if (!Array.isArray(data.goals)) {
-    data.goals = [];
-  }
-
   data.goals.push({
     id: Date.now(),
-    subject: subject,
-    topic: topic,
-    target: totalMinutes,   // stored in minutes
-    spent: 0,
+    subject,
+    topic,
+    targetSeconds: totalSec,
+    spentSeconds: 0,
     completed: false,
     active: false
   });
@@ -102,49 +36,14 @@ function showAddGoal() {
   loadGoals();
 }
 
-
 function activateGoal(id) {
   const data = getData();
-
-  if (!Array.isArray(data.goals)) return;
-
-  data.goals.forEach(goal => {
-    goal.active = false;
-  });
-
-  const selectedGoal = data.goals.find(g => g.id === id);
-
-  if (selectedGoal && !selectedGoal.completed) {
-    selectedGoal.active = true;
+  data.goals.forEach(g => g.active = false);
+  const g = data.goals.find(x => x.id === id);
+  if (g && !g.completed) {
+    g.active = true;
     data.activeGoalId = id;
   }
-
   saveData(data);
   loadGoals();
 }
-
-function completeGoal(id) {
-  const data = getData();
-
-  if (!Array.isArray(data.goals)) return;
-
-  const goal = data.goals.find(g => g.id === id);
-
-  if (goal) {
-    goal.completed = true;
-    goal.active = false;
-    data.activeGoalId = null;
-  }
-
-  saveData(data);
-  loadGoals();
-}
-
-/* ===============================
-   SAFETY HELPERS
-================================ */
-
-// Prevent app crash if user navigates fast
-window.addEventListener("error", () => {
-  console.warn("Recovered from a minor error");
-});
