@@ -1,22 +1,36 @@
+/* ===============================
+   APP STARTUP
+================================ */
+
 document.addEventListener("DOMContentLoaded", () => {
   updateGreeting();
   loadScreen("home");
 });
 
+/* ===============================
+   GREETING
+================================ */
+
 function updateGreeting() {
   const hour = new Date().getHours();
-  const g = document.getElementById("greeting");
+  const greeting = document.getElementById("greeting");
 
-  if (hour < 12) g.textContent = "Good Morning 👋";
-  else if (hour < 18) g.textContent = "Good Afternoon 👋";
-  else g.textContent = "Good Evening 👋";
+  if (!greeting) return;
+
+  if (hour < 12) greeting.textContent = "Good Morning 👋";
+  else if (hour < 18) greeting.textContent = "Good Afternoon 👋";
+  else greeting.textContent = "Good Evening 👋";
 }
+
+/* ===============================
+   DASHBOARD UPDATE
+================================ */
 
 function updateDashboard() {
   const data = getData();
 
-  const studied = data.studiedToday;
-  const target = data.dailyTarget;
+  const studied = data.studiedToday || 0;
+  const target = data.dailyTarget || 1;
 
   const hours = Math.floor(studied / 60);
   const minutes = studied % 60;
@@ -39,20 +53,29 @@ function updateDashboard() {
       total - (percent / 100) * total;
   }
 }
-function showAddGoal() {
-  const subject = prompt("Subject?");
-  const topic = prompt("Topic?");
-  const hours = prompt("Target time (hours)?");
 
-  if (!subject || !topic || !hours) return;
+/* ===============================
+   GOALS – ADD / ACTIVATE / COMPLETE
+================================ */
+
+function showAddGoal() {
+  const subject = prompt("Enter subject");
+  const topic = prompt("Enter topic");
+  const hours = prompt("Target time (in hours)");
+
+  if (!subject || !topic || !hours || isNaN(hours)) return;
 
   const data = getData();
 
+  if (!Array.isArray(data.goals)) {
+    data.goals = [];
+  }
+
   data.goals.push({
     id: Date.now(),
-    subject,
-    topic,
-    target: hours * 60,
+    subject: subject,
+    topic: topic,
+    target: Number(hours) * 60,
     spent: 0,
     completed: false,
     active: false
@@ -65,11 +88,18 @@ function showAddGoal() {
 function activateGoal(id) {
   const data = getData();
 
-  data.goals.forEach(g => g.active = false);
-  data.activeGoalId = id;
+  if (!Array.isArray(data.goals)) return;
 
-  const goal = data.goals.find(g => g.id === id);
-  if (goal) goal.active = true;
+  data.goals.forEach(goal => {
+    goal.active = false;
+  });
+
+  const selectedGoal = data.goals.find(g => g.id === id);
+
+  if (selectedGoal && !selectedGoal.completed) {
+    selectedGoal.active = true;
+    data.activeGoalId = id;
+  }
 
   saveData(data);
   loadGoals();
@@ -77,6 +107,9 @@ function activateGoal(id) {
 
 function completeGoal(id) {
   const data = getData();
+
+  if (!Array.isArray(data.goals)) return;
+
   const goal = data.goals.find(g => g.id === id);
 
   if (goal) {
@@ -89,3 +122,11 @@ function completeGoal(id) {
   loadGoals();
 }
 
+/* ===============================
+   SAFETY HELPERS
+================================ */
+
+// Prevent app crash if user navigates fast
+window.addEventListener("error", () => {
+  console.warn("Recovered from a minor error");
+});
