@@ -1,16 +1,36 @@
 // navigation.js
-// Handles bottom navigation safely
+// Centralized, safe navigation handler
 
 document.addEventListener("DOMContentLoaded", () => {
   const screenContainer = document.getElementById("screen-container");
+  const navButtons = document.querySelectorAll(".bottom-nav button");
 
-  function loadScreen(screen) {
+  // ---- helper: clear screen safely ----
+  function clearScreen() {
+    if (screenContainer) {
+      screenContainer.innerHTML = "";
+    }
+  }
+
+  // ---- helper: set active nav button ----
+  function setActive(screen) {
+    navButtons.forEach(btn => {
+      btn.classList.toggle("active", btn.dataset.screen === screen);
+    });
+  }
+
+  // ---- MAIN NAVIGATION FUNCTION ----
+  window.loadScreen = function (screen) {
     if (!screenContainer) return;
+
+    clearScreen();
+    setActive(screen);
 
     switch (screen) {
       case "home":
         if (typeof loadHome === "function") {
           loadHome();
+          // ensure dashboard numbers always refresh
           setTimeout(() => {
             if (typeof updateDashboard === "function") {
               updateDashboard();
@@ -44,16 +64,18 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
     }
-  }
+  };
 
-  // Attach click listeners to bottom nav buttons
-  document.querySelectorAll(".bottom-nav button").forEach(button => {
-    button.addEventListener("click", () => {
-      const screen = button.getAttribute("data-screen");
-      loadScreen(screen);
+  // ---- attach click listeners ----
+  navButtons.forEach(btn => {
+    btn.addEventListener("click", () => {
+      const screen = btn.dataset.screen;
+      if (screen) {
+        loadScreen(screen);
+      }
     });
   });
 
-  // Load default screen
+  // ---- initial load ----
   loadScreen("home");
 });
