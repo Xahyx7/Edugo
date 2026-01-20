@@ -61,9 +61,26 @@ function updateDashboard() {
 function showAddGoal() {
   const subject = prompt("Enter subject");
   const topic = prompt("Enter topic");
-  const hours = prompt("Target time (in hours)");
 
-  if (!subject || !topic || !hours || isNaN(hours)) return;
+  const hoursInput = prompt("Target hours (0 if none)");
+  const minutesInput = prompt("Target minutes (0–59)");
+
+  if (!subject || !topic) return;
+
+  const hours = Number(hoursInput) || 0;
+  const minutes = Number(minutesInput) || 0;
+
+  if (hours < 0 || minutes < 0 || minutes >= 60) {
+    alert("Please enter valid time");
+    return;
+  }
+
+  const totalMinutes = (hours * 60) + minutes;
+
+  if (totalMinutes <= 0) {
+    alert("Goal time must be greater than 0");
+    return;
+  }
 
   const data = getData();
 
@@ -75,7 +92,7 @@ function showAddGoal() {
     id: Date.now(),
     subject: subject,
     topic: topic,
-    target: Number(hours) * 60,
+    target: totalMinutes,   // stored in minutes
     spent: 0,
     completed: false,
     active: false
@@ -84,6 +101,7 @@ function showAddGoal() {
   saveData(data);
   loadGoals();
 }
+
 
 function activateGoal(id) {
   const data = getData();
