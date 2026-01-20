@@ -1,0 +1,20 @@
+:root {
+  --radius: 20px;
+  --transition: 0.3s ease-in-out;
+  --accent: #4f46e5;
+  --font: 'Inter', sans-serif;
+}
+
+body[data-theme="light"] {
+  --bg: #f5f7fa;
+  --card: #ffffff;
+  --text: #111827;
+  --subtext: #6b7280;
+}
+
+body[data-theme="dark"] {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #e5e7eb;
+  --subtext: #9ca3af;
+}
