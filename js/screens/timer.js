@@ -41,13 +41,12 @@ function stopTimer() {
 
   pauseTimer();
 
-  const minutes = Math.floor(elapsedSeconds / 60);
-  addStudyTime(minutes);
+  // 🔥 THIS IS THE FIX
+  addStudySeconds(elapsedSeconds);
 
   elapsedSeconds = 0;
   updateTimerDisplay();
 
-  // 🔥 FORCE DASHBOARD UPDATE
   loadHome();
   setTimeout(updateDashboard, 50);
 }
