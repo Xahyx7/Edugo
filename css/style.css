@@ -1,0 +1,65 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: var(--font);
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  height: 100vh;
+}
+
+#app {
+  max-width: 430px;
+  margin: auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Header */
+.app-header {
+  padding: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.subtext {
+  color: var(--subtext);
+  font-size: 14px;
+}
+
+#themeToggle {
+  border: none;
+  background: var(--card);
+  padding: 10px;
+  border-radius: 50%;
+  font-size: 18px;
+  cursor: pointer;
+}
+
+/* Main */
+main {
+  flex: 1;
+  padding: 16px;
+  overflow-y: auto;
+}
+
+/* Bottom Nav */
+.bottom-nav {
+  display: flex;
+  justify-content: space-around;
+  padding: 12px 0;
+  background: var(--card);
+  border-radius: 20px 20px 0 0;
+}
+
+.bottom-nav button {
+  border: none;
+  background: none;
+  font-size: 20px;
+  cursor: pointer;
+}
