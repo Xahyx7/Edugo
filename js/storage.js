@@ -1,21 +1,21 @@
 const STORAGE_KEY = "study_helper_data";
 
-function getTodayKey() {
+function todayKey() {
   return new Date().toDateString();
 }
 
-function getWeekKey(date = new Date()) {
-  const d = new Date(date);
-  const day = d.getDay();
-  const diff = d.getDate() - day + (day === 0 ? -6 : 1);
-  return new Date(d.setDate(diff)).toDateString();
+function weekKey(d = new Date()) {
+  const date = new Date(d);
+  const day = date.getDay() || 7;
+  date.setDate(date.getDate() - day + 1);
+  return date.toDateString();
 }
 
 function getData() {
   const raw = localStorage.getItem(STORAGE_KEY);
   return raw ? JSON.parse(raw) : {
     studiedSecondsToday: 0,
-    lastStudyDate: null,
+    lastDate: null,
 
     goals: [],
     activeGoalId: null,
@@ -26,18 +26,15 @@ function getData() {
   };
 }
 
-function saveData(data) {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+function saveData(d) {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
 }
 
-function ensureDailyReset() {
-  const data = getData();
-  const today = getTodayKey();
-
-  if (data.lastStudyDate !== today) {
+function resetIfNewDay(data) {
+  const today = todayKey();
+  if (data.lastDate !== today) {
     data.studiedSecondsToday = 0;
-    data.lastStudyDate = today;
-    saveData(data);
+    data.lastDate = today;
   }
 }
 
@@ -46,40 +43,34 @@ function addStudySeconds(seconds) {
 
   const data = getData();
   const now = new Date();
-  const todayKey = getTodayKey();
+  resetIfNewDay(data);
 
-  ensureDailyReset();
-
-  // ---- DASHBOARD ----
+  // DASHBOARD
   data.studiedSecondsToday += seconds;
 
-  // ---- DAILY STATS ----
-  data.dailyStats[todayKey] =
-    (data.dailyStats[todayKey] || 0) + seconds;
+  // DAILY
+  const dKey = todayKey();
+  data.dailyStats[dKey] = (data.dailyStats[dKey] || 0) + seconds;
 
-  // ---- WEEKLY STATS ----
-  const weekKey = getWeekKey(now);
-  if (!data.weeklyStats[weekKey]) {
-    data.weeklyStats[weekKey] = {1:0,2:0,3:0,4:0,5:0,6:0,7:0};
-  }
-  const dayIndex = ((now.getDay() + 6) % 7) + 1;
-  data.weeklyStats[weekKey][dayIndex] += seconds;
+  // WEEKLY
+  const wKey = weekKey(now);
+  if (!data.weeklyStats[wKey]) data.weeklyStats[wKey] = Array(7).fill(0);
+  const idx = (now.getDay() + 6) % 7;
+  data.weeklyStats[wKey][idx] += seconds;
 
-  // ---- YEARLY STATS ----
-  const year = now.getFullYear().toString();
-  if (!data.yearlyStats[year]) {
-    data.yearlyStats[year] = Array(12).fill(0);
-  }
+  // YEARLY
+  const year = now.getFullYear();
+  if (!data.yearlyStats[year]) data.yearlyStats[year] = Array(12).fill(0);
   data.yearlyStats[year][now.getMonth()] += seconds;
 
-  // ---- ACTIVE GOAL ----
-  if (data.activeGoalId !== null) {
-    const goal = data.goals.find(g => g.id === data.activeGoalId);
-    if (goal && !goal.completed) {
-      goal.spent += Math.ceil(seconds / 60);
-      if (goal.spent >= goal.target) {
-        goal.completed = true;
-        goal.active = false;
+  // GOALS
+  if (data.activeGoalId) {
+    const g = data.goals.find(x => x.id === data.activeGoalId);
+    if (g && !g.completed) {
+      g.spentSeconds += seconds;
+      if (g.spentSeconds >= g.targetSeconds) {
+        g.completed = true;
+        g.active = false;
         data.activeGoalId = null;
       }
     }
