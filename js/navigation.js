@@ -4,24 +4,17 @@ function loadScreen(screen) {
   if (screen === "home") {
     loadHome();
     setTimeout(updateDashboard, 50);
-  }
-  else if (screen === "timer") {
+  } else if (screen === "timer") {
     loadTimer();
-  }
-  else {
-    screenContainer.innerHTML = `
-      <div class="fade-in" style="padding:20px">
-        <h2>${screen.toUpperCase()}</h2>
-        <p>Coming soon</p>
-      </div>
-    `;
+  } else if (screen === "goals") {
+    loadGoals();
+  } else {
+    screenContainer.innerHTML = `<p>Coming soon</p>`;
   }
 }
 
 document.querySelectorAll(".bottom-nav button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    loadScreen(btn.dataset.screen);
-  });
+  btn.onclick = () => loadScreen(btn.dataset.screen);
 });
 
 loadScreen("home");
