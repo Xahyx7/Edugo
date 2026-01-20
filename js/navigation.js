@@ -1,32 +1,38 @@
-const screenContainer = document.getElementById("screen-container");
+document.addEventListener("DOMContentLoaded", () => {
+  const screenContainer = document.getElementById("screen-container");
 
-function loadScreen(screen) {
-  if (screen === "home") {
-    loadHome();
-    setTimeout(updateDashboard, 50);
-  } 
-  else if (screen === "timer") {
-    loadTimer();
-  } 
-  else if (screen === "goals") {
-    loadGoals();
-  } 
-  else {
-    screenContainer.innerHTML = `
-      <div class="fade-in" style="padding:20px">
-        <h2>${screen}</h2>
-        <p>Coming soon</p>
-      </div>
-    `;
+  function loadScreen(screen) {
+    console.log("Loading screen:", screen);
+
+    if (screen === "home") {
+      loadHome();
+      setTimeout(() => {
+        if (typeof updateDashboard === "function") {
+          updateDashboard();
+        }
+      }, 50);
+    }
+    else if (screen === "timer") {
+      loadTimer();
+    }
+    else if (screen === "goals") {
+      if (typeof loadGoals === "function") {
+        loadGoals();
+      } else {
+        alert("loadGoals is NOT defined");
+      }
+    }
+    else {
+      screenContainer.innerHTML = "<p>Coming soon</p>";
+    }
   }
-}
 
-document.querySelectorAll(".bottom-nav button").forEach(btn => {
-  btn.addEventListener("click", () => {
-    const screen = btn.getAttribute("data-screen");
-    loadScreen(screen);
+  document.querySelectorAll(".bottom-nav button").forEach(btn => {
+    btn.addEventListener("click", () => {
+      const screen = btn.dataset.screen;
+      loadScreen(screen);
+    });
   });
-});
 
-// Load default screen
-loadScreen("home");
+  loadScreen("home");
+});
