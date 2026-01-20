@@ -1,38 +1,59 @@
+// navigation.js
+// Handles bottom navigation safely
+
 document.addEventListener("DOMContentLoaded", () => {
   const screenContainer = document.getElementById("screen-container");
 
   function loadScreen(screen) {
-    console.log("Loading screen:", screen);
+    if (!screenContainer) return;
 
-    if (screen === "home") {
-      loadHome();
-      setTimeout(() => {
-        if (typeof updateDashboard === "function") {
-          updateDashboard();
+    switch (screen) {
+      case "home":
+        if (typeof loadHome === "function") {
+          loadHome();
+          setTimeout(() => {
+            if (typeof updateDashboard === "function") {
+              updateDashboard();
+            }
+          }, 50);
         }
-      }, 50);
-    }
-    else if (screen === "timer") {
-      loadTimer();
-    }
-    else if (screen === "goals") {
-      if (typeof loadGoals === "function") {
-        loadGoals();
-      } else {
-        alert("loadGoals is NOT defined");
-      }
-    }
-    else {
-      screenContainer.innerHTML = "<p>Coming soon</p>";
+        break;
+
+      case "timer":
+        if (typeof loadTimer === "function") {
+          loadTimer();
+        }
+        break;
+
+      case "goals":
+        if (typeof loadGoals === "function") {
+          loadGoals();
+        }
+        break;
+
+      case "stats":
+        if (typeof loadStats === "function") {
+          loadStats("daily");
+        }
+        break;
+
+      default:
+        screenContainer.innerHTML = `
+          <div class="fade-in" style="padding:20px">
+            <h2>Coming Soon</h2>
+          </div>
+        `;
     }
   }
 
-  document.querySelectorAll(".bottom-nav button").forEach(btn => {
-    btn.addEventListener("click", () => {
-      const screen = btn.dataset.screen;
+  // Attach click listeners to bottom nav buttons
+  document.querySelectorAll(".bottom-nav button").forEach(button => {
+    button.addEventListener("click", () => {
+      const screen = button.getAttribute("data-screen");
       loadScreen(screen);
     });
   });
 
+  // Load default screen
   loadScreen("home");
 });
