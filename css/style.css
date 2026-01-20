@@ -63,3 +63,99 @@ main {
   font-size: 20px;
   cursor: pointer;
 }
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* Cards */
+.card {
+  background: var(--card);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+}
+
+/* HERO CARD */
+.hero-card {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* Progress Ring */
+.progress-ring {
+  position: relative;
+  width: 140px;
+  height: 140px;
+}
+
+svg circle {
+  fill: none;
+  stroke-width: 10;
+}
+
+svg circle:first-child {
+  stroke: #e5e7eb;
+}
+
+#progressCircle {
+  stroke: var(--accent);
+  stroke-linecap: round;
+  stroke-dasharray: 377;
+  stroke-dashoffset: 377;
+  transform: rotate(-90deg);
+  transform-origin: 50% 50%;
+  transition: stroke-dashoffset 1s ease;
+}
+
+.progress-text {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Primary Button */
+.primary-btn {
+  padding: 16px;
+  border-radius: 999px;
+  border: none;
+  background: linear-gradient(135deg, var(--accent), #6366f1);
+  color: white;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* Goals */
+.section-title {
+  margin-top: 10px;
+}
+
+.goal-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.goal-progress {
+  width: 40%;
+  text-align: right;
+}
+
+.bar {
+  background: #e5e7eb;
+  border-radius: 10px;
+  height: 6px;
+  overflow: hidden;
+}
+
+.fill {
+  height: 100%;
+  background: var(--accent);
+  transition: width 0.6s ease;
+}
