@@ -3,9 +3,11 @@ const STORAGE_KEY = "study_helper_data";
 function getData() {
   const raw = localStorage.getItem(STORAGE_KEY);
   return raw ? JSON.parse(raw) : {
-    studiedToday: 0,      // minutes
-    dailyTarget: 300,     // 5 hours
-    lastStudyDate: null
+    studiedToday: 0,
+    dailyTarget: 300,
+    lastStudyDate: null,
+    goals: [],
+    activeGoalId: null
   };
 }
 
@@ -25,5 +27,20 @@ function addStudyTime(minutes) {
   }
 
   data.studiedToday += minutes;
+
+  // Add to active goal
+  if (data.activeGoalId !== null) {
+    const goal = data.goals.find(g => g.id === data.activeGoalId);
+    if (goal && !goal.completed) {
+      goal.spent += minutes;
+
+      if (goal.spent >= goal.target) {
+        goal.completed = true;
+        data.activeGoalId = null;
+        goal.active = false;
+      }
+    }
+  }
+
   saveData(data);
 }
