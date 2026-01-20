@@ -39,3 +39,53 @@ function updateDashboard() {
       total - (percent / 100) * total;
   }
 }
+function showAddGoal() {
+  const subject = prompt("Subject?");
+  const topic = prompt("Topic?");
+  const hours = prompt("Target time (hours)?");
+
+  if (!subject || !topic || !hours) return;
+
+  const data = getData();
+
+  data.goals.push({
+    id: Date.now(),
+    subject,
+    topic,
+    target: hours * 60,
+    spent: 0,
+    completed: false,
+    active: false
+  });
+
+  saveData(data);
+  loadGoals();
+}
+
+function activateGoal(id) {
+  const data = getData();
+
+  data.goals.forEach(g => g.active = false);
+  data.activeGoalId = id;
+
+  const goal = data.goals.find(g => g.id === id);
+  if (goal) goal.active = true;
+
+  saveData(data);
+  loadGoals();
+}
+
+function completeGoal(id) {
+  const data = getData();
+  const goal = data.goals.find(g => g.id === id);
+
+  if (goal) {
+    goal.completed = true;
+    goal.active = false;
+    data.activeGoalId = null;
+  }
+
+  saveData(data);
+  loadGoals();
+}
+
