@@ -353,3 +353,32 @@ p {
 #studiedTime {
   font-variant-numeric: tabular-nums;
 }
+.stats-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 16px;
+}
+
+.stats-tabs button {
+  flex: 1;
+  background: rgba(255,255,255,0.06);
+  color: var(--text);
+}
+
+.stats-tabs button.active {
+  background: var(--accent-soft);
+}
+.fade-in {
+  animation: fade 0.35s ease;
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
