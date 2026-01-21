@@ -1,32 +1,48 @@
+/* ===============================
+   DASHBOARD UPDATE
+================================ */
+
 function updateDashboard() {
   const data = getData();
-  const sec = data.studiedSecondsToday;
+  const sec = data.todaySeconds || 0;
 
   const h = Math.floor(sec / 3600);
   const m = Math.floor((sec % 3600) / 60);
 
-  document.getElementById("studiedTime").textContent = `${h}h ${m}m`;
+  const timeEl = document.getElementById("studiedTime");
+  if (timeEl) timeEl.textContent = `${h}h ${m}m`;
 
   const circle = document.getElementById("progressCircle");
-  const percent = Math.min(sec / (5 * 3600), 1);
-  circle.style.strokeDashoffset = 377 - percent * 377;
+  if (circle) {
+    const radius = 70;
+    const circumference = 2 * Math.PI * radius;
+    const percent = Math.min(sec / (5 * 3600), 1);
+    circle.style.strokeDasharray = circumference;
+    circle.style.strokeDashoffset =
+      circumference - percent * circumference;
+  }
 }
+
+/* ===============================
+   GOALS – ADD / ACTIVATE / COMPLETE
+================================ */
 
 function showAddGoal() {
   const subject = prompt("Subject");
   const topic = prompt("Topic");
-  const h = Number(prompt("Hours")) || 0;
-  const m = Number(prompt("Minutes")) || 0;
+  const h = Number(prompt("Hours (0 if none)")) || 0;
+  const m = Number(prompt("Minutes (0–59)")) || 0;
 
-  const totalSec = (h * 3600) + (m * 60);
-  if (totalSec <= 0) return;
+  const totalSeconds = (h * 3600) + (m * 60);
+  if (totalSeconds <= 0) return;
 
   const data = getData();
+
   data.goals.push({
     id: Date.now(),
     subject,
     topic,
-    targetSeconds: totalSec,
+    targetSeconds: totalSeconds,
     spentSeconds: 0,
     completed: false,
     active: false
@@ -36,21 +52,33 @@ function showAddGoal() {
   loadGoals();
 }
 
+/* Activate ONE goal */
 function activateGoal(id) {
   const data = getData();
+
   data.goals.forEach(g => g.active = false);
-  const g = data.goals.find(x => x.id === id);
-  if (g && !g.completed) {
-    g.active = true;
+
+  const goal = data.goals.find(g => g.id === id);
+  if (goal && !goal.completed) {
+    goal.active = true;
     data.activeGoalId = id;
   }
+
   saveData(data);
   loadGoals();
 }
-window.addEventListener("load", () => {
-  const splash = document.getElementById("splash");
-  if (splash) {
-    splash.style.opacity = "0";
-    setTimeout(() => splash.remove(), 600);
-  }
-});
+
+/* ✅ MANUAL COMPLETE — THIS WAS MISSING */
+function completeGoal(id) {
+  const data = getData();
+  const goal = data.goals.find(g => g.id === id);
+
+  if (!goal) return;
+
+  goal.completed = true;
+  goal.active = false;
+  data.activeGoalId = null;
+
+  saveData(data);
+  loadGoals();
+}
