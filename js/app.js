@@ -47,3 +47,10 @@ function activateGoal(id) {
   saveData(data);
   loadGoals();
 }
+window.addEventListener("load", () => {
+  const splash = document.getElementById("splash");
+  if (splash) {
+    splash.style.opacity = "0";
+    setTimeout(() => splash.remove(), 600);
+  }
+});
