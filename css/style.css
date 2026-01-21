@@ -419,3 +419,7 @@ p {
 #splash p {
   color: var(--subtext);
 }
+/* ---- FORCE SPLASH TO NEVER BLOCK UI ---- */
+#splash {
+  pointer-events: none !important;
+}
