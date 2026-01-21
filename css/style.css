@@ -81,11 +81,18 @@ main {
 
 /* Cards */
 .card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  background: linear-gradient(
+    180deg,
+    rgba(255,255,255,0.04),
+    rgba(255,255,255,0.02)
+  );
+  border: 1px solid var(--border-soft);
+  border-radius: 18px;
+  padding: 18px;
+  margin-bottom: 16px;
+  backdrop-filter: blur(10px);
 }
+
 
 /* HERO CARD */
 .hero-card {
