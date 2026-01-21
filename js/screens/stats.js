@@ -29,7 +29,6 @@ function formatTime(seconds) {
 
 /* ---------- DAILY ---------- */
 function renderDailyStats(data) {
-  const today = new Date().toDateString();
   const total = data.todaySeconds || 0;
 
   let goalsHtml = "";
@@ -54,7 +53,7 @@ function renderDailyStats(data) {
     </div>
 
     <div class="card">
-      <h3>Goals Today</h3>
+      <h3>Goals Worked On</h3>
       ${
         hasGoals
           ? `<ul>${goalsHtml}</ul>`
@@ -63,6 +62,7 @@ function renderDailyStats(data) {
     </div>
   `;
 }
+
 
 /* ---------- WEEKLY ---------- */
 function renderWeeklyStats(data) {
