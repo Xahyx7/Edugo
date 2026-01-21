@@ -1,3 +1,19 @@
+// ---- HARD SPLASH KILL (SAFE) ----
+(function removeSplashSafely() {
+  const splash = document.getElementById("splash");
+  if (!splash) return;
+
+  splash.style.opacity = "0";
+  splash.style.pointerEvents = "none";
+
+  setTimeout(() => {
+    if (splash && splash.parentNode) {
+      splash.parentNode.removeChild(splash);
+    }
+  }, 300);
+})();
+
+
 /* ===============================
    DASHBOARD UPDATE
 ================================ */
