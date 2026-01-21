@@ -349,3 +349,7 @@ p {
   color: var(--subtext);
   font-size: 14px;
 }
+.timer-display,
+#studiedTime {
+  font-variant-numeric: tabular-nums;
+}
