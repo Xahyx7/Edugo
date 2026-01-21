@@ -48,5 +48,5 @@ function loadHome() {
     </section>
   `;
 
-  setTimeout(updateDashboard, 50);
+  setTimeout(updateDashboard, 0);
 }
