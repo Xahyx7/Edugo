@@ -20,24 +20,31 @@
 
 function updateDashboard() {
   const data = getData();
-  const sec = data.todaySeconds || 0;
+  const sec = Number(data.todaySeconds || 0);
 
+  // ---- Text ----
   const h = Math.floor(sec / 3600);
   const m = Math.floor((sec % 3600) / 60);
 
   const timeEl = document.getElementById("studiedTime");
   if (timeEl) timeEl.textContent = `${h}h ${m}m`;
 
+  // ---- Ring ----
   const circle = document.getElementById("progressCircle");
-  if (circle) {
-    const radius = 70;
-    const circumference = 2 * Math.PI * radius;
-    const percent = Math.min(sec / (5 * 3600), 1);
-    circle.style.strokeDasharray = circumference;
-    circle.style.strokeDashoffset =
-      circumference - percent * circumference;
-  }
+  if (!circle) return;
+
+  const radius = 70;
+  const circumference = 2 * Math.PI * radius;
+
+  // daily target = 5 hours (safe default)
+  const dailyTargetSeconds = 5 * 3600;
+  const progress = Math.min(sec / dailyTargetSeconds, 1);
+
+  circle.style.strokeDasharray = `${circumference}`;
+  circle.style.strokeDashoffset =
+    `${circumference - progress * circumference}`;
 }
+
 
 /* ===============================
    GOALS – ADD / ACTIVATE / COMPLETE
